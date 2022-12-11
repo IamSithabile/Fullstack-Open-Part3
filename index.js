@@ -2,7 +2,9 @@ const express = require("express");
 
 const app = express();
 
-const notes = [
+app.use(express.json());
+
+let notes = [
   {
     id: 1,
     name: "Arto Hellas",
@@ -69,6 +71,7 @@ const getCurrentTimestamp = () => {
 app.get("/", (request, response) => {
   response.send("<h1>Hello World</h1>");
 });
+
 app.get("/info", (request, response) => {
   const dateString = getCurrentTimestamp();
 
@@ -90,6 +93,15 @@ app.get("/api/persons/:id", (request, response) => {
 
 app.get("/api/persons", (request, response) => {
   response.json(notes);
+});
+
+app.delete("/api/persons/:id", (request, response) => {
+  const id = Number(request.params.id);
+
+  notes = notes.filter((n) => n.id !== id);
+  console.log(notes);
+
+  response.status(204).end();
 });
 
 const PORT = 3001;
