@@ -76,6 +76,18 @@ app.get("/info", (request, response) => {
   response.send(responseText);
 });
 
+app.get("/api/persons/:id", (request, response) => {
+  const id = Number(request.params.id);
+
+  const note = notes.find((n) => n.id === id);
+
+  if (!note) {
+    response.status(404).end();
+  }
+
+  response.json(note);
+});
+
 app.get("/api/persons", (request, response) => {
   response.json(notes);
 });
