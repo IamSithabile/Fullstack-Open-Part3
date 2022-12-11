@@ -25,8 +25,55 @@ const notes = [
   },
 ];
 
+const getCurrentTimestamp = () => {
+  const date = new Date();
+  const day = date.getDate();
+  const time = date.toLocaleTimeString();
+  const timezone = date.getTimezoneOffset();
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  const days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+
+  const month = months[date.getMonth()];
+  const dayOfWeek = days[date.getDay()];
+  const year = date.getFullYear();
+
+  const timezoneString = `UTC${timezone >= 0 ? "+" : ""}${timezone / 60}`;
+
+  const dateString = `${dayOfWeek}, ${month} ${day}, ${year} - ${time} ${timezoneString}`;
+
+  return dateString;
+};
+
 app.get("/", (request, response) => {
   response.send("<h1>Hello World</h1>");
+});
+app.get("/info", (request, response) => {
+  const dateString = getCurrentTimestamp();
+
+  const responseText = `Phonebook has info for ${notes.length} people  ${dateString}`;
+  response.send(responseText);
 });
 
 app.get("/api/persons", (request, response) => {
