@@ -2,7 +2,23 @@ const express = require("express");
 
 const app = express();
 
+const morgan = require("morgan");
+
+morgan.token("mBody", function getBody(req) {
+  return JSON.stringify(req.body);
+});
+
+app.use(morgan(":method :url :response-time :mBody"));
+
+app.get("/", function (req, res) {
+  res.send("hello, world!");
+});
+
 app.use(express.json());
+
+// app.use(requestLogger);
+
+// app.use(morgan("tiny")); --> displayed a prefomated log
 
 ///// Entries object
 
@@ -152,6 +168,13 @@ app.post("/api/persons", (request, response) => {
 
   response.json(serverEntry);
 });
+
+///// Handle requests that do not have a path defined
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: "unknown endpoint" });
+};
+
+app.use(unknownEndpoint);
 
 /// Listen to post\\\\\\
 
