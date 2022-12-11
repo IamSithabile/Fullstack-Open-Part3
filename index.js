@@ -4,6 +4,8 @@ const app = express();
 
 app.use(express.json());
 
+///// Entries object
+
 let entries = [
   {
     id: 1,
@@ -26,6 +28,8 @@ let entries = [
     number: "39-23-6423122",
   },
 ];
+
+//// Create the timestamp
 
 const getCurrentTimestamp = () => {
   const date = new Date();
@@ -68,11 +72,14 @@ const getCurrentTimestamp = () => {
   return dateString;
 };
 
+//// generate the id for each new post
+
 const generateId = () => {
   const generatedId = Math.floor(Math.random() * 100000);
   return generatedId;
 };
 
+///// HTTP GET\\\\\\\\\
 app.get("/", (request, response) => {
   response.send("<h1>Hello World</h1>");
 });
@@ -100,6 +107,8 @@ app.get("/api/persons", (request, response) => {
   response.json(entries);
 });
 
+///// HTTP DELETE\\\\\\\\\
+
 app.delete("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
 
@@ -108,6 +117,8 @@ app.delete("/api/persons/:id", (request, response) => {
 
   response.status(204).end();
 });
+
+/////HTTP POST\\\\\\\\\
 
 app.post("/api/persons", (request, response) => {
   const entry = request.body;
@@ -141,6 +152,8 @@ app.post("/api/persons", (request, response) => {
 
   response.json(serverEntry);
 });
+
+/// Listen to post\\\\\\
 
 const PORT = 3001;
 app.listen(PORT);
