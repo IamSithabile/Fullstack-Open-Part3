@@ -4,7 +4,7 @@ const app = express();
 
 app.use(express.json());
 
-let notes = [
+let entries = [
   {
     id: 1,
     name: "Arto Hellas",
@@ -80,47 +80,66 @@ app.get("/", (request, response) => {
 app.get("/info", (request, response) => {
   const dateString = getCurrentTimestamp();
 
-  const responseText = `Phonebook has info for ${notes.length} people  ${dateString}`;
+  const responseText = `Phonebook has info for ${entries.length} people  ${dateString}`;
   response.send(responseText);
 });
 
 app.get("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
 
-  const note = notes.find((n) => n.id === id);
+  const entry = entries.find((e) => e.id === id);
 
-  if (!note) {
+  if (!entry) {
     response.status(404).end();
   }
 
-  response.json(note);
+  response.json(entry);
 });
 
 app.get("/api/persons", (request, response) => {
-  response.json(notes);
+  response.json(entries);
 });
 
 app.delete("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
 
-  notes = notes.filter((n) => n.id !== id);
-  console.log(notes);
+  entries = entries.filter((e) => e.id !== id);
+  console.log(entries);
 
   response.status(204).end();
 });
 
 app.post("/api/persons", (request, response) => {
-  const note = request.body;
+  const entry = request.body;
+  const exists = entries.find((e) => e.name === entry.name);
 
-  const serverNote = {
+  if (entry && !entry.name) {
+    response
+      .status(404)
+      .json({ error: "The phonebook entry must have a name" });
+    return;
+  }
+  if (entry && !entry.number) {
+    response
+      .status(404)
+      .json({ error: "The phonebook entry must have a number" });
+    return;
+  }
+
+  if (exists) {
+    response.status(404).json({ error: "The phonebook entry must be unique" });
+    return;
+  }
+
+  const serverEntry = {
     id: generateId(),
-    name: note.name,
-    number: note.number,
+    name: entry.name,
+    number: entry.number,
   };
 
-  notes = notes.concat(serverNote);
+  entries = entries.concat(serverEntry);
 
-  response.json(serverNote);
+  response.json(serverEntry);
 });
 
 const PORT = 3001;
