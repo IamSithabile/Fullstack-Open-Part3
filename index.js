@@ -68,6 +68,11 @@ const getCurrentTimestamp = () => {
   return dateString;
 };
 
+const generateId = () => {
+  const generatedId = Math.floor(Math.random() * 100000);
+  return generatedId;
+};
+
 app.get("/", (request, response) => {
   response.send("<h1>Hello World</h1>");
 });
@@ -102,6 +107,20 @@ app.delete("/api/persons/:id", (request, response) => {
   console.log(notes);
 
   response.status(204).end();
+});
+
+app.post("/api/persons", (request, response) => {
+  const note = request.body;
+
+  const serverNote = {
+    id: generateId(),
+    name: note.name,
+    number: note.number,
+  };
+
+  notes = notes.concat(serverNote);
+
+  response.json(serverNote);
 });
 
 const PORT = 3001;
