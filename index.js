@@ -12,7 +12,7 @@ morgan.token("mBody", function getBody(req) {
   return JSON.stringify(req.body);
 });
 
-app.use(morgan(":method :url :response-time :mBody"));
+app.use(morgan(":method :url :res[content-length] - :response-time ms :mBody"));
 
 app.get("/", function (req, res) {
   res.send("hello, world!");
@@ -182,6 +182,6 @@ app.use(unknownEndpoint);
 
 /// Listen to post\\\\\\
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT);
 console.log("Listening to port:", PORT);
