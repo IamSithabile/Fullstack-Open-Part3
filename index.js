@@ -6,7 +6,11 @@ const morgan = require("morgan");
 
 const cors = require("cors");
 
+const static = require("static");
+
 app.use(cors());
+
+app.use(express.static("build"));
 
 morgan.token("mBody", function getBody(req) {
   return JSON.stringify(req.body);
