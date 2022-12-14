@@ -1,15 +1,13 @@
+require("dotenv").config();
 const express = require("express");
-
 const app = express();
-
 const morgan = require("morgan");
-
 const cors = require("cors");
-
 const static = require("static");
 
-app.use(cors());
+const Person = require("./mongo.cjs");
 
+app.use(cors());
 app.use(express.static("build"));
 
 morgan.token("mBody", function getBody(req) {
@@ -18,40 +16,9 @@ morgan.token("mBody", function getBody(req) {
 
 app.use(morgan(":method :url :res[content-length] - :response-time ms :mBody"));
 
-app.get("/", function (req, res) {
-  res.send("hello, world!");
-});
-
 app.use(express.json());
 
-// app.use(requestLogger);
-
 // app.use(morgan("tiny")); --> displayed a prefomated log
-
-///// Entries object
-
-let entries = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
 
 //// Create the timestamp
 
@@ -104,15 +71,14 @@ const generateId = () => {
 };
 
 ///// HTTP GET\\\\\\\\\
-app.get("/", (request, response) => {
-  response.send("<h1>Hello World</h1>");
-});
 
-app.get("/info", (request, response) => {
-  const dateString = getCurrentTimestamp();
+app.get("/api/persons", (request, response) => {
+  Person.find({}).then((entries) => {
+    console.log("Recieved entries", entries);
 
-  const responseText = `Phonebook has info for ${entries.length} people  ${dateString}`;
-  response.send(responseText);
+    response.json(entries);
+    mongoose.connection.close();
+  });
 });
 
 app.get("/api/persons/:id", (request, response) => {
@@ -127,8 +93,11 @@ app.get("/api/persons/:id", (request, response) => {
   response.json(entry);
 });
 
-app.get("/api/persons", (request, response) => {
-  response.json(entries);
+app.get("/info", (request, response) => {
+  const dateString = getCurrentTimestamp();
+
+  const responseText = `Phonebook has info for ${entries.length} people  ${dateString}`;
+  response.send(responseText);
 });
 
 ///// HTTP DELETE\\\\\\\\\
