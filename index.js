@@ -96,13 +96,22 @@ app.get("/info", (request, response) => {
 
 ///// HTTP DELETE\\\\\\\\\
 
-app.delete("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
+app.delete("/api/persons/:id", (request, response, next) => {
+  const id = request.params.id;
+  console.log(id, typeof id);
 
-  entries = entries.filter((e) => e.id !== id);
-  console.log(entries);
-
-  response.status(204).end();
+  Person.findByIdAndRemove(id)
+    .then((result) => {
+      console.log("entry Deleted:", result);
+      response.status(204).end();
+    })
+    .catch((error) => {
+      console.log(
+        "Error deleting --- passing error to express default error handler",
+        error
+      );
+      next(error);
+    });
 });
 
 /////HTTP POST\\\\\\\\\
