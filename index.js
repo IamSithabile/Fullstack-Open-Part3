@@ -5,6 +5,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 const static = require("static");
 
+const mongoose = require("mongoose");
 const Person = require("./mongo.cjs");
 
 app.use(cors());
@@ -63,13 +64,6 @@ const getCurrentTimestamp = () => {
   return dateString;
 };
 
-//// generate the id for each new post
-
-const generateId = () => {
-  const generatedId = Math.floor(Math.random() * 100000);
-  return generatedId;
-};
-
 ///// HTTP GET\\\\\\\\\
 
 app.get("/api/persons", (request, response) => {
@@ -77,7 +71,7 @@ app.get("/api/persons", (request, response) => {
     console.log("Recieved entries", entries);
 
     response.json(entries);
-    mongoose.connection.close();
+    // mongoose.connection.close();
   });
 });
 
@@ -115,35 +109,41 @@ app.delete("/api/persons/:id", (request, response) => {
 
 app.post("/api/persons", (request, response) => {
   const entry = request.body;
-  const exists = entries.find((e) => e.name === entry.name);
+  // const exists = entries.find((e) => e.name === entry.name);
 
-  if (entry && !entry.name) {
-    response
-      .status(404)
-      .json({ error: "The phonebook entry must have a name" });
-    return;
-  }
-  if (entry && !entry.number) {
-    response
-      .status(404)
-      .json({ error: "The phonebook entry must have a number" });
-    return;
-  }
+  // if (entry && !entry.name) {
+  //   response
+  //     .status(404)
+  //     .json({ error: "The phonebook entry must have a name" });
+  //   return;
+  // }
+  // if (entry && !entry.number) {
+  //   response
+  //     .status(404)
+  //     .json({ error: "The phonebook entry must have a number" });
+  //   return;
+  // }
 
-  if (exists) {
-    response.status(404).json({ error: "The phonebook entry must be unique" });
-    return;
-  }
+  // if (exists) {
+  //   response.status(404).json({ error: "The phonebook entry must be unique" });
+  //   return;
+  // }
 
-  const serverEntry = {
-    id: generateId(),
+  const databaseEntry = new Person({
     name: entry.name,
     number: entry.number,
-  };
+  });
 
-  entries = entries.concat(serverEntry);
+  databaseEntry
+    .save()
+    .then((response) => {
+      console.log("Saved phonebook entry");
+    })
+    .catch((e) =>
+      console.log("Unable to save entry into the database", e.message)
+    );
 
-  response.json(serverEntry);
+  response.json(databaseEntry);
 });
 
 ///// Handle requests that do not have a path defined
