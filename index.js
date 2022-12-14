@@ -19,6 +19,18 @@ app.use(morgan(":method :url :res[content-length] - :response-time ms :mBody"));
 
 app.use(express.json());
 
+const errorHandler = (error, req, res, next) => {
+  console.log(error);
+
+  if (error.name === "CastError") {
+    return res.status(400).send({ error: "Malformatted ID" });
+  } else if (error.name === "ValidationError") {
+    return res.status(400).json({ error: error.message });
+  }
+
+  next(error);
+};
+
 // app.use(morgan("tiny")); --> displayed a prefomated log
 
 //// Create the timestamp
@@ -161,6 +173,8 @@ const unknownEndpoint = (request, response) => {
 };
 
 app.use(unknownEndpoint);
+
+app.use(errorHandler);
 
 /// Listen to post\\\\\\
 
