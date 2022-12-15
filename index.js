@@ -5,7 +5,7 @@ const cors = require("cors");
 const static = require("static");
 
 const mongoose = require("mongoose");
-const Person = require("./mongo.cjs");
+const Person = require("./models/person.cjs");
 
 const app = express();
 
