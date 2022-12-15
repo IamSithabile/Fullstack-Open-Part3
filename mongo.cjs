@@ -12,9 +12,25 @@ mongoose
   });
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: Number,
-  id: Number,
+  name: {
+    type: String,
+    minLength: 3,
+    required: true,
+  },
+  number: {
+    type: String,
+    minLength: 8,
+    required: true,
+    validate: {
+      validator: function (value) {
+        const hyphenIndex = value.indexOf("-");
+        if (hyphenIndex === 2 || hyphenIndex === 3) {
+          return true;
+        }
+        return false;
+      },
+    },
+  },
 });
 
 personSchema.set("toJSON", {

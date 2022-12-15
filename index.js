@@ -137,6 +137,7 @@ app.delete("/api/persons/:id", (request, response, next) => {
 });
 
 /////HTTP PUT\\\\\\
+
 app.put("/api/persons/:id", (request, response, next) => {
   const id = request.params.id;
   const body = request.body;
@@ -148,6 +149,8 @@ app.put("/api/persons/:id", (request, response, next) => {
 
   Person.findByIdAndUpdate(id, person, {
     new: true,
+    runValidators: true,
+    context: "query",
   })
     .then((updatedNote) => {
       if (updatedNote) {
@@ -164,29 +167,33 @@ app.put("/api/persons/:id", (request, response, next) => {
     });
 });
 
-/////HTTP POST\\\\\\\\\
+/////HTTP POST\\\\\\\\
 
 app.post("/api/persons", (request, response, next) => {
   const entry = request.body;
-  // const exists = entries.find((e) => e.name === entry.name);
 
-  // if (entry && !entry.name) {
-  //   response
-  //     .status(404)
-  //     .json({ error: "The phonebook entry must have a name" });
-  //   return;
-  // }
-  // if (entry && !entry.number) {
-  //   response
-  //     .status(404)
-  //     .json({ error: "The phonebook entry must have a number" });
-  //   return;
-  // }
+  if (entry && !entry.name) {
+    response
+      .status(400)
+      .json({ error: "The phonebook entry must have a name" });
+    return;
+  }
 
-  // if (exists) {
-  //   response.status(404).json({ error: "The phonebook entry must be unique" });
-  //   return;
-  // }
+  if (entry && !entry.number) {
+    response
+      .status(400)
+      .json({ error: "The phonebook entry must have a number" });
+    return;
+  }
+
+  Person.exists({ name: entry.name }, (error, exists) => {
+    console.log("Does the entry exists? ", exists);
+    if (exists) {
+      return response
+        .status(400)
+        .json({ error: "This person is already in the phonebook" });
+    }
+  });
 
   const databaseEntry = new Person({
     name: entry.name,
@@ -206,6 +213,7 @@ app.post("/api/persons", (request, response, next) => {
 });
 
 ///// Handle requests that do not have a path defined
+
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: "unknown endpoint" });
 };
