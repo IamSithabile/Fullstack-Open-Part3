@@ -10,7 +10,8 @@
     "build:ui": "rm -rf build && cd ../Fullstack-Open/part2/phonebook && npm run build && cp -r build ../../../Fullstack-Open-Part3/",
     "deploy": "fly deploy",
     "deploy:full": "npm run build:ui && npm run deploy",
-    "logs:prod": "fly logs"
+    "logs:prod": "fly logs",
+    "lint": "eslint ."
   },
   "author": "Sithabile Mananga",
   "license": "ISC",
@@ -23,6 +24,7 @@
     "static": "^2.0.0"
   },
   "devDependencies": {
+    "eslint": "^8.29.0",
     "nodemon": "^2.0.20"
   }
 }

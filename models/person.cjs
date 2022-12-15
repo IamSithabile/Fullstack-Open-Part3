@@ -1,9 +1,11 @@
 const mongoose = require("mongoose");
 
+// eslint-disable-next-line no-undef
 const url = process.env.MONGODB_URI;
 
 mongoose
   .connect(url)
+  // eslint-disable-next-line no-unused-vars
   .then((response) => {
     console.log("Connected to database");
   })

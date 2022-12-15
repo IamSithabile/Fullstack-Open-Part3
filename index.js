@@ -2,9 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
-const static = require("static");
 
-const mongoose = require("mongoose");
 const Person = require("./models/person.cjs");
 
 const app = express();
@@ -224,6 +222,7 @@ app.use(errorHandler);
 
 /// Listen to post\\\\\\
 
+// eslint-disable-next-line no-undef
 const PORT = process.env.PORT || 3001;
 app.listen(PORT);
 console.log("Listening to port:", PORT);
